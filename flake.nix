@@ -1,28 +1,24 @@
 {
   inputs = {
     nixpkgs.url = "nixpkgs/nixos-25.05";
-    systems = {
-      url = "github:nix-systems/default-linux";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    systems.url = "github:nix-systems/default-linux";
     nixos-generators = {
       url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  outputs = { self, nixpkgs, systems, flake-utils, nixos-generators, ... }@inputs:
-    flake-utils.lib.eachDefaultSystem (system: {
-      packages.${system} = {
+  outputs = { self, nixpkgs, systems, nixos-generators, ... }@inputs:
+    let
+      eachSystem = nixpkgs.lib.genAttrs (import systems);
+    in
+    {
+      packages = eachSystem (system: {
         vmware = nixos-generators.nixosGenerate {
           system = "${system}";
+          format = "vmware";
           modules = [
             ./configuration.nix
           ];
-          format = "vmware";
 
           # optional arguments:
           # explicit nixpkgs and lib:
@@ -38,7 +34,10 @@
         vbox = nixos-generators.nixosGenerate {
           system = "${system}";
           format = "virtualbox";
+          modules = [
+            ./configuration.nix
+          ];
         };
-      };
-    });
+      });
+    };
 }
