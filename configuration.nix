@@ -12,6 +12,8 @@
   services.openssh.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
+  security.sudo.enable = true;
+
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS user";
@@ -19,6 +21,7 @@
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK2RKpJ8qQJbWwdy24pyCIcQ1awTH+3ZwtYF8OG8FCJv nixos@nixos-vm"
     ];
+    extraGroups = [ "wheel" ];
   };
 
   environment.systemPackages = [
