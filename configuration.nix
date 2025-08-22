@@ -39,7 +39,8 @@
   # Show IP addresses on the console login prompt (pre-login)
   # agetty expands \4 as IPv4 and \6 as IPv6 at runtime
   services.getty.helpLine = ''
-    IP addresses: \4 \6
+    IPv4: \4
+    IPv6: \6
   '';
 
   # Set the NixOS release to latest stable
