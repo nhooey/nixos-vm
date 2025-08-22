@@ -8,6 +8,9 @@
   # Allow unfree software in nixpkgs
   nixpkgs.config.allowUnfree = true;
 
+  # Enable Nix Flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Enable the OpenSSH daemon and allow SSH through the firewall
   services.openssh.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
