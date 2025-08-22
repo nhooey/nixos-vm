@@ -75,6 +75,8 @@ fi
 export VM_ARCH
 export VM_TYPE
 
+printf "\n>>> nixos-vm: Creating a virtual machine image with the 'nixos-generators' Flake...\n"
+
 # Enable Nix Flakes
 printf "\n>>> Enabling Nix Flakes...\n"
 NIX_CONF='/etc/nixos/configuration.nix'
@@ -86,5 +88,8 @@ if ! sudo grep -q 'nix.settings.experimental-features' "$NIX_CONF"; then
 fi
 sudo nixos-rebuild switch
 
-printf "\n>>> Building Nix Flake for VM: {arch: '${VM_ARCH}', type: '${VM_TYPE}'}\n"
+printf "\n>>> Creating virtual machine image with Nix Flake: {arch: '${VM_ARCH}', type: '${VM_TYPE}'}\n"
 nix build --refresh "github:nhooey/nixos-vm#packages.${VM_ARCH}.${VM_TYPE}"
+
+printf "\n>>> Completed.\n\nVirtual machine images:\n-----------------------\n"
+ls -sh result/nixos-image-*
