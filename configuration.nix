@@ -14,7 +14,7 @@
   # Enable the OpenSSH daemon and allow SSH through the firewall
   services.openssh = {
     enable = true;
-    passwordAuthentication = false;
+    settings.PasswordAuthentication = false;
   };
   networking.firewall.allowedTCPPorts = [ 22 ];
 
