@@ -15,6 +15,7 @@
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS user";
+    hashedPassword = "$6$XpJJEDcGVilE/WPF$BvTFYs/bXL25yiaCY/4dgwTWn82rMGKAi6CgRcQkDp9yINgpLxOGDFZpZtItvRFwCcNwypC5sll7mn/mNW14R/";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK2RKpJ8qQJbWwdy24pyCIcQ1awTH+3ZwtYF8OG8FCJv nixos@nixos-vm"
     ];
