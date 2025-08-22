@@ -12,15 +12,20 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   # Enable the OpenSSH daemon and allow SSH through the firewall
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    passwordAuthentication = false;
+  };
   networking.firewall.allowedTCPPorts = [ 22 ];
 
-  security.sudo.enable = true;
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = false;
+  };
 
   users.users.nixos = {
     isNormalUser = true;
     description = "NixOS user";
-    hashedPassword = "$6$XpJJEDcGVilE/WPF$BvTFYs/bXL25yiaCY/4dgwTWn82rMGKAi6CgRcQkDp9yINgpLxOGDFZpZtItvRFwCcNwypC5sll7mn/mNW14R/";
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK2RKpJ8qQJbWwdy24pyCIcQ1awTH+3ZwtYF8OG8FCJv nixos@nixos-vm"
     ];
