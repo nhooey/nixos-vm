@@ -10,34 +10,48 @@
   outputs = { self, nixpkgs, systems, nixos-generators, ... }@inputs:
     let
       eachSystem = nixpkgs.lib.genAttrs (import systems);
+
+      nodes = [ "localdev" ];
+
+      gen-image = (nodename: system:
+        nixos-generators.nixosGenerate {
+          inherit system;
+          format = "raw-efi";
+          modules = [
+            ./nix/common.nix
+          ];
+          specialArgs = {
+            self = self;
+            nodeHostName = nodename;
+          };
+        });
+      gen-config = (nodename: system:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./nix/common.nix
+
+            # Duplicate subset of `raw-efi.nix` from upstream `nixos-generators`
+            # to get `nixos-rebuild` working
+            ./nix/raw-efi.nix
+          ];
+          specialArgs = {
+            self = self;
+            nodeHostName = nodename;
+          };
+        });
     in
     {
-      packages = eachSystem (system: {
-        vmware = nixos-generators.nixosGenerate {
-          system = "${system}";
-          format = "vmware";
-          modules = [
-            ./configuration.nix
-          ];
+      packages = eachSystem (system: builtins.listToAttrs (
+        map
+          (nodename: { "name" = nodename; "value" = gen-image nodename system; })
+          (nodes)
+      ));
 
-          # optional arguments:
-          # explicit nixpkgs and lib:
-          # pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          # lib = nixpkgs.legacyPackages.x86_64-linux.lib;
-          # additional arguments to pass to modules:
-          # specialArgs = { myExtraArg = "foobar"; };
-
-          # you can also define your own custom formats
-          # customFormats = { "myFormat" = <myFormatModule>; ... };
-          # format = "myFormat";
-        };
-        vbox = nixos-generators.nixosGenerate {
-          system = "${system}";
-          format = "virtualbox";
-          modules = [
-            ./configuration.nix
-          ];
-        };
-      });
+      nixosConfigurations = eachSystem (system: builtins.listToAttrs (
+        map
+          (nodename: { "name" = nodename; "value" = gen-config nodename system; })
+          (nodes)
+      ));
     };
 }
