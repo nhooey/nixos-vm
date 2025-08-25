@@ -27,6 +27,7 @@
           format = vm-format;
           modules = [
             ./nix/common.nix
+            ./nix/configuration.nix
           ];
           specialArgs = {
             self = self;
@@ -39,6 +40,7 @@
           inherit system;
           modules = [
             ./nix/common.nix
+            ./nix/configuration.nix
 
             # Duplicate subset of `raw-efi.nix` from upstream `nixos-generators`
             # to get `nixos-rebuild` working
