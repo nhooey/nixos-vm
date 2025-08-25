@@ -11,21 +11,30 @@
     let
       eachSystem = nixpkgs.lib.genAttrs (import systems);
 
-      nodes = [ "localdev" ];
+      nodes = [
+        {
+          name = "localdev";
+          hostname = "localdev";
+          vm-formats = [ "vmware" "raw-efi" ];
+        }
+      ];
 
-      gen-image = (nodename: system:
+      inherit (import ./nix/util/expandAttrs.nix { }) expandAttrs;
+
+      gen-image = (hostname: system: vm-format:
         nixos-generators.nixosGenerate {
           inherit system;
-          format = "raw-efi";
+          format = vm-format;
           modules = [
             ./nix/common.nix
           ];
           specialArgs = {
             self = self;
-            nodeHostName = nodename;
+            nodeHostName = hostname;
           };
         });
-      gen-config = (nodename: system:
+
+      gen-config = (hostname: system:
         nixpkgs.lib.nixosSystem {
           inherit system;
           modules = [
@@ -37,21 +46,34 @@
           ];
           specialArgs = {
             self = self;
-            nodeHostName = nodename;
+            nodeHostName = hostname;
           };
         });
     in
     {
-      packages = eachSystem (system: builtins.listToAttrs (
-        map
-          (nodename: { "name" = nodename; "value" = gen-image nodename system; })
-          (nodes)
-      ));
+      # Flake packages must be structured by system: packages.<system>.<name> = derivation
+      packages = eachSystem (system:
+        builtins.listToAttrs (
+          builtins.concatMap
+            (e:
+              builtins.map
+                (vm-format: { name = "${e.name}_${vm-format}"; value = gen-image e.hostname system vm-format; })
+                e.vm-formats
+            )
+            nodes
+        )
+      );
 
-      nixosConfigurations = eachSystem (system: builtins.listToAttrs (
-        map
-          (nodename: { "name" = nodename; "value" = gen-config nodename system; })
-          (nodes)
-      ));
+      # Provide one nixosConfiguration per (name, system); pick raw-efi as canonical to avoid duplicates
+      nixosConfigurations = eachSystem (system:
+        builtins.listToAttrs (
+          builtins.map
+            (e: {
+              name = "${e.name}-${system}";
+              value = gen-config e.hostname system;
+            })
+            nodes
+        )
+      );
     };
 }
