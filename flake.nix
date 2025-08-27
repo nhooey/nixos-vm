@@ -70,18 +70,12 @@
 
       # Provide one nixosConfiguration per (name, system); pick raw-efi as canonical to avoid duplicates
       nixosConfigurations =
-        (builtins.listToAttrs
-          (builtins.map
-            (system: {
-              name = system;
-              value = builtins.listToAttrs (
-                builtins.map
-                  (e: {
-                    name = e.hostname;
-                    value = gen-config e.hostname system;
-                  })
-                  nodes);
+        builtins.listToAttrs (
+          builtins.map
+            (e: {
+              name = e.hostname;
+              value = gen-config e.hostname "aarch64-linux";
             })
-            [ "x86_64-linux" "aarch64-linux" ]));
+            nodes);
     };
 }
