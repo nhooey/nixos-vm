@@ -24,8 +24,6 @@
         }
       ];
 
-      inherit (import ./nix/util/expandAttrs.nix { }) expandAttrs;
-
       gen-image = (hostname: system: vm-format:
         nixos-generators.nixosGenerate {
           inherit system;
@@ -35,7 +33,6 @@
             ./nix/configuration.nix
           ];
           specialArgs = {
-            inherit system;
             inherit self flakeInfo;
             nodeHostName = hostname;
           };
