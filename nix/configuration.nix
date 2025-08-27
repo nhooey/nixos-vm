@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, self, system, flakeInfo, nodeHostName, ... }:
 {
   # Allow unfree software in nixpkgs
   nixpkgs.config.allowUnfree = true;
@@ -31,12 +31,23 @@
     pkgs.git
   ];
 
-  # Show IP addresses on the console login prompt (pre-login)
-  # agetty expands \4 as IPv4 and \6 as IPv6 at runtime
-  services.getty.helpLine = ''
-
-    IP addresses (local):
-    IPv4: \4
-    IPv6: \6
-  '';
+  services.getty.helpLine =
+    let
+      padRight = maxlen: str:
+        let
+          len = builtins.stringLength str;
+          padlen = maxlen - len;
+        in
+        if padlen <= 0 then str
+        else str + (builtins.concatStringsSep "" (builtins.genList (_: " ") padlen));
+    in
+    ''
+      ┌──────────────────────────────────────────────────────────────┐
+      │  - Hostname: ${padRight 26   nodeHostName} ${padRight 6 "Arch:"} ${system}
+      │  - Flake:    ${padRight 26 flakeInfo.name} ${padRight 6 "Rev: "} ${flakeInfo.version}
+      │
+      │  - IPv4:     \4
+      │  - IPv6:     \6
+      └──────────────────────────────────────────────────────────────┘
+    '';
 }

@@ -1,4 +1,4 @@
-{ config, pkgs, self, nodeHostName, ... }:
+{ config, pkgs, self, system, flakeInfo, nodeHostName, ... }:
 {
   networking.hostName = nodeHostName;
 
