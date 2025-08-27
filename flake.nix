@@ -71,7 +71,7 @@
         builtins.listToAttrs (
           builtins.map
             (e: {
-              name = "${e.name}-${system}";
+              name = e.hostname;
               value = gen-config e.hostname system;
             })
             nodes
