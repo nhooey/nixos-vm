@@ -8,6 +8,7 @@
   fileSystems."/" = {
     device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
+    options = [ "x-systemd.growfs" "x-initrd.mount" ];
   };
   fileSystems."/boot" = {
     device = "/dev/disk/by-label/ESP";
