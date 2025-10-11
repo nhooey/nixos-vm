@@ -14,5 +14,5 @@ macOS can't build Linux virtual machines with the [`nixos-generators`](https://g
 4. Run:
    ```
    URL='https://raw.githubusercontent.com/nhooey/nixos-vm/master/bin/bootstrap-build-flake.sh'
-   curl -L $URL | bash -s <VM_ARCH> <VM_TYPE>`
+   curl -L $URL | bash -s <VM_ARCH> <VM_TYPE>
    ```
