@@ -1,22 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 
-# Check if both parameters are provided
-if [ $# -ne 2 ]; then
-    echo "error: Incorrect number of command-line parameters specified." >2
-    usage()
-fi
-
-VM_ARCH="$1"
-VM_TYPE="$2"
-
-# Destroys command-line-parameters
-set pipefail
-
-# Define allowed values
-ALLOWED_ARCHS=("aarch64-linux" "x86_64-linux")
-ALLOWED_VM_TYPES=("vmware" "vbox")
-
 # Helper function to join array elements with a delimiter
 join_array() {
     local delimiter="$1"
@@ -46,17 +30,31 @@ contains_element() {
     return 1
 }
 
+# Define allowed values
+ALLOWED_ARCHS=("aarch64-linux" "x86_64-linux")
+ALLOWED_VM_FORMATS=("vmware" "vbox")
+
 # Function to display usage instructions
 usage() {
-    echo "Usage: $0 <VM_ARCH> <VM_TYPE>"
+    echo "Usage: $0 <VM_ARCH> <VM_FORMAT>"
     echo ""
-    echo "Parameters:"
-    echo "  VM_ARCH     Target architecture (required)"
-    echo "                  Allowed values: $(join_array ", " "${ALLOWED_ARCHS[@]}")"
-    echo "  VM_TYPE  Target VM type (required)"
-    echo "                  Allowed values: $(join_array ", " "${ALLOWED_VM_TYPES[@]}")"
+    echo "Parameters and values:"
+    echo "  <VM_ARCH>    Target VM architecture: $(join_array ", " "${ALLOWED_ARCHS[@]}")"
+    echo "  <VM_FORMAT>  Target VM format:       $(join_array ", " "${ALLOWED_VM_FORMATS[@]}")"
     exit 1
 }
+
+# Check if both parameters are provided
+if [ $# -ne 2 ]; then
+    echo "error: Incorrect number of command-line parameters specified." >&2
+    usage
+fi
+
+VM_ARCH="$1"
+VM_TYPE="$2"
+
+# Destroys command-line-parameters
+set pipefail
 
 # Validate VM_ARCH
 if ! contains_element "$VM_ARCH" "${ALLOWED_ARCHS[@]}"; then
