@@ -33,6 +33,7 @@
             ./nix/configuration.nix
           ];
           specialArgs = {
+            inherit system;
             inherit self flakeInfo;
             nodeHostName = hostname;
           };
