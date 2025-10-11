@@ -3,8 +3,8 @@ set -eu
 
 # Check if both parameters are provided
 if [ $# -ne 2 ]; then
-    echo "Error: Both VM_ARCH and VM_TYPE are required."
-    usage
+    echo "error: Incorrect number of command-line parameters specified." >2
+    usage()
 fi
 
 VM_ARCH="$1"
@@ -89,7 +89,7 @@ fi
 sudo nixos-rebuild switch
 
 printf "\n>>> Creating virtual machine image with Nix Flake: {arch: '${VM_ARCH}', type: '${VM_TYPE}'}\n"
-nix build --refresh "github:nhooey/nixos-vm#packages.${VM_ARCH}.${VM_TYPE}"
+nix build --refresh "github:nhooey/nixos-vm#packages.${VM_ARCH}.localdev_${VM_TYPE}"
 
 printf "\n>>> Completed.\n\nVirtual machine images:\n-----------------------\n"
 ls -sh result/nixos-image-*
