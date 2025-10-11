@@ -51,7 +51,7 @@ if [ $# -ne 2 ]; then
 fi
 
 VM_ARCH="$1"
-VM_TYPE="$2"
+VM_FORMAT="$2"
 
 # Destroys command-line-parameters
 set pipefail
@@ -63,15 +63,15 @@ if ! contains_element "$VM_ARCH" "${ALLOWED_ARCHS[@]}"; then
     usage
 fi
 
-# Validate VM_TYPE
-if ! contains_element "$VM_TYPE" "${ALLOWED_VM_TYPES[@]}"; then
-    echo "Error: Invalid VM_TYPE '$VM_TYPE'"
-    echo "Allowed values: $(join_array ", " "${ALLOWED_VM_TYPES[@]}")"
+# Validate VM_FORMAT
+if ! contains_element "$VM_FORMAT" "${ALLOWED_VM_FORMATS[@]}"; then
+    echo "Error: Invalid VM_FORMAT '$VM_FORMAT'"
+    echo "Allowed values: $(join_array ", " "${ALLOWED_VM_FORMATS[@]}")"
     usage
 fi
 
 export VM_ARCH
-export VM_TYPE
+export VM_FORMAT
 
 printf "\n>>> nixos-vm: Creating a virtual machine image with the 'nixos-generators' Flake...\n"
 
@@ -86,8 +86,8 @@ if ! sudo grep -q 'nix.settings.experimental-features' "$NIX_CONF"; then
 fi
 sudo nixos-rebuild switch
 
-printf "\n>>> Creating virtual machine image with Nix Flake: {arch: '${VM_ARCH}', type: '${VM_TYPE}'}\n"
-nix build --refresh "github:nhooey/nixos-vm#packages.${VM_ARCH}.localdev_${VM_TYPE}"
+printf "\n>>> Creating virtual machine image with Nix Flake: {arch: '${VM_ARCH}', type: '${VM_FORMAT}'}\n"
+nix build --refresh "github:nhooey/nixos-vm#packages.${VM_ARCH}.localdev_${VM_FORMAT}"
 
 printf "\n>>> Completed.\n\nVirtual machine images:\n-----------------------\n"
 ls -sh result/nixos-image-*
