@@ -16,3 +16,7 @@ macOS can't build Linux virtual machines with the [`nixos-generators`](https://g
    URL='https://raw.githubusercontent.com/nhooey/nixos-vm/master/bin/bootstrap-build-flake.sh'
    curl -L $URL | bash -s <VM_ARCH> <VM_TYPE>
    ```
+
+The virtual machine image that is produced will have a hostname of `localdev`. This can't be changed because it has to be specified in the Nix Flake configuration (`flake.nix`), and Nix Flakes must be declarative and deterministic by default.
+
+The way to change what nodes are generated and what their hostnames are is to fork this repository and change the node definitions. There might be a better way to do this, but I haven't got around to figuring it out yet.
