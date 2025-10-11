@@ -46,7 +46,7 @@ usage() {
 
 # Check if both parameters are provided
 if [ $# -ne 2 ]; then
-    echo "error: Incorrect number of command-line parameters specified." >&2
+    echo "error: Incorrect number of command-line parameters ($#) specified" >&2
     usage
 fi
 
